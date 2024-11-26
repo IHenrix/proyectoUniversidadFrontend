@@ -1,3 +1,18 @@
-<p>
-  alumno works!
-</p>
+<h2 class="h2-sunarp text-sunarp-gray-dark text-center mt-4 mb-4">Mis Cursos</h2>
+<div class="container-payment">
+  <div *ngFor="let item of listaCursos" class="card-payment">
+    <div class="face face1 bg-sunarp-cyan selected-face">
+      <div class="content-payment">
+        <img alt="CCI" src="assets/img/formulario-virtual/icon-bank.png" />
+        <h3>{{item.curso}}</h3>
+      </div>
+    </div>
+    <div class="face face2 selected-face">
+      <div class="content-payment">
+        <p>Docente: <b>{{item.docente}}</b>
+        </p>
+        <button type="button" class="btn-sunarp-cyan"><i class="fa fa-check icon-sunarp mr-2"></i>Ver Notas</button>
+      </div>
+    </div>
+  </div>
+</div>

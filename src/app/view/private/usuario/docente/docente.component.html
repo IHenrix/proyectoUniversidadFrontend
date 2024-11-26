@@ -1,3 +1,42 @@
-<p>
-  docente works!
-</p>
+<h2 *ngIf="cursoSeleccionado == null" class="h2-sunarp text-sunarp-gray-dark text-center mt-4 mb-4">Mis Cursos Asignados</h2>
+<div *ngIf="cursoSeleccionado == null"  class="container-payment">
+  <div *ngFor="let item of listaCursos" class="card-payment">
+    <div class="face face1 bg-sunarp-red-light selected-face">
+      <div class="content-payment">
+        <img alt="CCI" src="assets/img/formulario-virtual/icon-bank.png" />
+        <h3>{{item.curso}}</h3>
+      </div>
+    </div>
+    <div class="face face2 selected-face">
+      <div class="content-payment">
+        <p>Cantidad de Alumnos: <b>{{item.docente}}</b>
+        </p>
+        <button (click)="seleccionarCurso(item)" type="button" class="btn-sunarp-black"><i class="fa fa-check icon-sunarp mr-2"></i>Ver Alumnos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mt-2" [hidden]="cursoSeleccionado == null">
+  <h2 class="h2-sunarp text-sunarp-gray-dark text-center mt-4 mb-4">{{cursoSeleccionado?.curso}}</h2>
+  <button (click)="regresarListaCursos()" type="button" class="btn-sunarp-gray-light "><i class="fa fa-arrow-left icon-sunarp mr-2"></i>Regresar</button>
+
+  <div class="table-responsive">
+    <table datatable class="table thead-sunarp" datatable [dtOptions]="datatable_lista_alumnos"
+      [dtTrigger]="datatable_dtTrigger_lista_alumnos">
+      <thead>
+        <tr>
+          <th style="width: 30px" class="text-center">N°</th>
+          <th class="text-center">Código</th>
+          <th class="text-center">Paterno</th>
+          <th class="text-center">Materno</th>
+          <th class="text-center">Nombre</th>
+          <th class="text-center">Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -60,7 +60,7 @@ export class AuthService {
 
    obtenerRol(): number {
     if (this._usuario) {
-      return this._usuario.id;
+      return this._usuario.rol_id;
     }
     return null;
   }

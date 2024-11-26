@@ -220,6 +220,12 @@
   color: $sunarp-white;
 }
 
+.btn-sunarp-black{
+  @extend .btn-sunarp;
+  background-color: $sunarp-black;
+  color: $sunarp-white;
+}
+
 .btn-sunarp-gray-light {
   @extend .btn-sunarp;
   background-color: $sunarp-gray-light;
