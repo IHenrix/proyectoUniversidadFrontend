@@ -24,4 +24,7 @@ export class DocenteService {
     params = params.append('cursoId', cursoId);
     return this.http.get<any>(this.baseEndpoint + '/cursos/alumnos', { params: params })
   }
+  registrarEditarNotas(data: any): Observable<any> {
+    return this.http.post<any>(this.baseEndpoint + '/registrar-editar-notas', JSON.stringify(data))
+  }
 }

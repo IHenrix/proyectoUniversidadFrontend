@@ -8,7 +8,9 @@ import { Usuario } from 'src/app/interfaces/auth/usuario';
 import { AlumnoService } from 'src/app/service/alumno.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { DocenteService } from 'src/app/service/docente.service';
-import { languageDataTable } from 'src/app/util/helpers';
+import { alertNotificacion, languageDataTable } from 'src/app/util/helpers';
+import { environment } from 'src/environments/environment';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-docente',
@@ -28,27 +30,7 @@ export class DocenteComponent implements OnInit {
   modal_editar_notas_va: any;
   notaPonderada:string='0.00';
   inputEnFoco: boolean = false;
-
-  @HostListener('focusin', ['$event'])
-  onFocus(event: FocusEvent): void {
-    const target = event.target as HTMLElement;
-
-    if (target.tagName === 'INPUT') {
-      this.inputEnFoco = true;
-      console.log('Input enfocado:', target);
-    }
-  }
-
-  @HostListener('focusout', ['$event'])
-  onBlur(event: FocusEvent): void {
-    const target = event.target as HTMLElement;
-
-    if (target.tagName === 'INPUT') {
-      this.inputEnFoco = false;
-      console.log('Input perdió el foco:', target);
-    }
-  }
-  
+  lectura:boolean=false;
   @ViewChildren(DataTableDirective) private dtElements;
   datatable_lista_alumnos: DataTables.Settings = {};
   datatable_dtTrigger_lista_alumnos: Subject<ADTSettings> = new Subject<ADTSettings>();
@@ -81,6 +63,31 @@ export class DocenteComponent implements OnInit {
           { data: 'paterno' },
           { data: 'materno' },
           {
+            data: 'notaAlumnoFinal', render: (data: any, type: any, full: any) => {
+              if(data==null){
+                return '--';
+              }
+              return data;
+            }
+          },
+          {
+            data: 'estado', render: (data: any, type: any, full: any) => {
+              let span="";
+              switch(data){
+                case 'E':
+                  span='<span class="badge-sunarp badge-sunarp-gray-light">En curso</span>'
+                break;
+                case 'A':
+                  span='<span class="badge-sunarp badge-sunarp-green">Aprobado</span>'
+                break;
+                case 'D':
+                  span='<span class="badge-sunarp badge-sunarp-red">Desaprobado</span>'
+                break;
+              }
+              return span;
+            }
+          },
+          {
             data: 'id', render: (data: any, type: any, full: any) => {
               return '<div class="btn-group"><button type="button" style ="margin-right:5px;" class="btn-sunarp-black ver_detalle mr-3"><i class="fa fa-eye" aria-hidden="true"></i> Ver</button><button type="button" class="btn-sunarp-red editar_notas mr-3"><i class="fa fa-pencil" aria-hidden="true"></i> Editar</button></div';
             }
@@ -92,10 +99,10 @@ export class DocenteComponent implements OnInit {
         ],
         rowCallback: (row: Node, data: any[] | Object, index: number) => {
           $('.ver_detalle', row).off().on('click', () => {
-            
+            this.seleccionAlumno(data,true);
           });
           $('.editar_notas', row).off().on('click', () => {
-            this.seleccionAlumno(data);
+            this.seleccionAlumno(data,false);
           });
           row.childNodes[0].textContent = String(index + 1);
           return row;
@@ -139,11 +146,14 @@ export class DocenteComponent implements OnInit {
     })
   }
 
-  seleccionAlumno(data:any){
+  seleccionAlumno(data:any,lectura:boolean){
     this.spinner.show();
     this.alumnoService.listarNotas(this.cursoSeleccionado.id, data.id).subscribe({
       next: resp => {
+        this.lectura=lectura;
         this.alumnoSeleccionado=data;
+        this.notaPoderada ="-";
+        this.notaPoderadaAlumno ="-";
         this.modal_editar_notas_va = this.modalservice.open(this.modal_editar_notas, { ...this.modalOpciones, size: 'lg' });
         this.listaNotas=resp;
         this.spinner.hide();
@@ -153,7 +163,6 @@ export class DocenteComponent implements OnInit {
       },
     })
   }
-
 
   regresarListaCursos(){
     this.cursoSeleccionado=null;
@@ -245,7 +254,40 @@ export class DocenteComponent implements OnInit {
   }
 
   guardarNotas(){
-      console.log(this.listaNotas);
+    const request={
+      alumnoCursoId:this.alumnoSeleccionado.id,
+      cursoId:this.cursoSeleccionado.id,
+      notas:this.listaNotas
+    }
+    this.spinner.show();
+    this.docenteService.registrarEditarNotas(request).subscribe({
+      next: resp => {
+        Swal.fire({
+          icon: "success",
+          title: "Se ha guardado satisfactoriamente las notas del alumno " +
+                 this.alumnoSeleccionado?.paterno + ' ' +
+                 this.alumnoSeleccionado?.materno + ' ' +
+                 this.alumnoSeleccionado?.nombre,
+          text: environment.nameSystem,
+          allowEnterKey: false,
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          confirmButtonColor: '#00A5A5',
+          confirmButtonText: '<span style="padding: 0 15px;">Aceptar</span>'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.seleccionarCurso(this.cursoSeleccionado);
+          }
+        });
+        this.spinner.hide();
+        this.modal_editar_notas_va.close();
+      },
+      error() {
+        alertNotificacion("Se ha producido un error al intentar registrar o editar las notas")
+        this.spinner.hide();
+      },
+    })
+
   }
 
 }
