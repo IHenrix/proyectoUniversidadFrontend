@@ -226,6 +226,14 @@
   color: $sunarp-white;
 }
 
+.btn-sunarp-black[disabled] {
+  @extend .btn-sunarp;
+  background-color: $sunarp-gray-light;
+  border: 2px solid $sunarp-gray-dark;
+  color: $sunarp-gray-dark;
+  cursor: not-allowed;
+}
+
 .btn-sunarp-gray-light {
   @extend .btn-sunarp;
   background-color: $sunarp-gray-light;
@@ -959,5 +967,22 @@ table.dataTable table {
   }
   .page-link {
     color: #4b626c !important;
+  }
+}
+
+.alert-sunarp-welcome {
+  header {
+    background: #d75443;
+  }
+
+  i:after {
+    background: #d75443;
+    content: "\f058";
+  }
+
+  h2 {
+    span {
+      color: #d75443;
+    }
   }
 }

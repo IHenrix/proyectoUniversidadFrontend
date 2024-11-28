@@ -51,7 +51,7 @@
   <section [ngClass]="{ 'lg-resize': isContainerFull, '':  !isContainerFull}" class="content-system ">
     <div [@FadeAnimation] (click)="menu_desplegable()" *ngIf="!isMenuOculto && isResponsive" class="overlay"></div>
     <div class="container-menu-principal">
-      <div class="alert-custom-sunarp alert-sunarp-green mt-2 mb-4 alert-custom-no-shadow">
+      <div class="alert-custom-sunarp alert-sunarp-welcome mt-2 mb-4 alert-custom-no-shadow">
         <header></header><i></i>
         <h2>
           <span>{{usuario?.sexo=='M'?'BIENVENIDO ':usuario?.sexo=='F'?'BIENVENIDA ':'BIENVENIDO '}}</span>{{usuario?.nombre}} {{usuario?.paterno}} {{usuario?.materno}}

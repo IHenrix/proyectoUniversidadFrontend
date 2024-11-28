@@ -18,4 +18,11 @@ export class AlumnoService {
     params = params.append('usuarioId', usuarioId);
     return this.http.get<any>(this.baseEndpoint + '/cursos', { params: params })
   }
+
+  listarNotas(cursoId: number,alumnoCursoId:number): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('cursoId', cursoId);
+    params = params.append('alumnoCursoId', alumnoCursoId);
+    return this.http.get<any>(this.baseEndpoint + '/notas', { params: params })
+  }
 }

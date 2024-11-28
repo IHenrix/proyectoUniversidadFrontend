@@ -20,7 +20,7 @@
 <div class="mt-2" [hidden]="cursoSeleccionado == null">
   <h2 class="h2-sunarp text-sunarp-gray-dark text-center mt-4 mb-4">{{cursoSeleccionado?.curso}}</h2>
   <button (click)="regresarListaCursos()" type="button" class="btn-sunarp-gray-light "><i class="fa fa-arrow-left icon-sunarp mr-2"></i>Regresar</button>
-
+  <h5 class="mt-2 w-100 text-center">Lista de Notas</h5>
   <div class="table-responsive">
     <table datatable class="table thead-sunarp" datatable [dtOptions]="datatable_lista_alumnos"
       [dtTrigger]="datatable_dtTrigger_lista_alumnos">
@@ -40,3 +40,87 @@
     </table>
   </div>
 </div>
+
+<ng-template #modal_editar_notas let-c="close" let-d="dismiss">
+  <div class="modal-content">
+    <div class="modal-header bg-sunarp-gray-dark">
+      <h3 class="modal-title h3-sunarp text-white">REGISTRO Y EDICIÓN DE NOTAS</h3>
+      <button tabindex="-1" type="button" class="close" aria-label="Close"
+        style="overflow:hidden; position: absolute; right: 30px; top: 1px;background-color: transparent;border: 0px;"
+        (click)="modal_editar_notas_va.close();">
+        <span aria-hidden="true" style="font-size:35px !important;" class="text-white">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body pl-5 pb-4 pr-5 pt-4">
+      <h2 class="text-center mb-3" style="font-size: 20px;font-weight: bold;">ALUMNO : <span
+          class="text-sunarp-red">{{alumnoSeleccionado?.paterno +' '+alumnoSeleccionado?.materno+' '+alumnoSeleccionado.nombre}}</span>
+      </h2>
+      <div class="mt-2">
+        <div class="table-responsive">
+          <table class="table table-soli-devo row-focus w-100">
+            <thead>
+              <tr>
+                <th style="width: 30px" class="text-center">N°</th>
+                <th class="text-center">Criterio</th>
+                <th class="text-center">Porcentaje %</th>
+                <th class="text-center">Nota</th>
+                <th class="text-center">Nota Estudiante</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let nota of listaNotas; let i = index">
+                <td>{{ nota.orden }}</td>
+                <td>{{ nota.criterio }}</td>
+                <td>{{ nota.porcentaje }}</td>
+                <td>
+                  <input
+                    digitOnly
+                    [(ngModel)]="listaNotas[i].nota"
+                    [decimal]="true"
+                    [decimalSeparator]="'.'"
+                    (blur)="formatearNota(i)"
+                    type="text"
+                    class="form-control-sunarp text-center"
+                    [class.input-invalid]="validarRango(listaNotas[i].nota) === 'invalid'"
+                    [class.input-valid]="validarRango(listaNotas[i].nota) === 'valid'"
+                    (input)="validarRango(listaNotas[i].nota)"
+                  />
+                </td>
+                <td>
+                  <input
+                    digitOnly
+                    [(ngModel)]="listaNotas[i].notaAlumno"
+                    type="text"
+                    class="form-control-sunarp text-center"
+                    disabled="true"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3" class="text-end">Promedio Calculado:</td>
+                <td class="text-center fw-bold">{{notaPoderada}}</td>
+                <td class="text-center fw-bold">{{notaPoderadaAlumno}}</td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert-promedio">
+          <span class="icono">
+            <img src="assets/img/sistema/nota.svg" alt="Icono" />
+          </span>
+          <span class="texto">
+            <strong>Promedio:</strong> --
+          </span>
+          <span class="estado">En curso</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer d-flex justify-content-center">
+      <button [disabled]="tieneNotasInvalidas()" (click)="guardarNotas()" type="button" class="btn-sunarp-black"><i
+        class="fa fa-save icon-sunarp mr-2"></i>Guardar</button>
+      <button (click)="modal_editar_notas_va.close();" type="button" class="btn-sunarp-red"><i
+          class="fa fa-times icon-sunarp mr-2"></i>Salir</button>
+    </div>
+  </div>
+</ng-template>

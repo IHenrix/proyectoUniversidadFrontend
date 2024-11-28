@@ -11,6 +11,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { DigitOnlyModule } from '../util/directives/digit-only.module';
 
 @NgModule({
   declarations: [],
@@ -27,7 +28,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatIconModule,
     NgxExtendedPdfViewerModule,
     NgSelectModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    DigitOnlyModule
     ],
   exports:[
     FormsModule,
@@ -43,7 +45,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatIconModule,
     NgxExtendedPdfViewerModule,
     NgSelectModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    DigitOnlyModule
   ]
 })
 export class SharedModule { }
