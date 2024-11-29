@@ -8,6 +8,7 @@ import { Usuario } from 'src/app/interfaces/auth/usuario';
 import { AlumnoService } from 'src/app/service/alumno.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { DocenteService } from 'src/app/service/docente.service';
+import { CONSTANTES } from 'src/app/shared/enum/perfil.type';
 import { alertNotificacion, languageDataTable } from 'src/app/util/helpers';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
@@ -25,6 +26,8 @@ export class DocenteComponent implements OnInit {
   listaCursos:any=[];
   listaAlumnos:any=[];
   listaNotas:any=[];
+
+  CONSTANTES: typeof CONSTANTES = CONSTANTES;
 
   @ViewChild('modal_editar_notas') modal_editar_notas: NgbModalRef;
   modal_editar_notas_va: any;
@@ -44,6 +47,7 @@ export class DocenteComponent implements OnInit {
   }
   notaPoderada:string | number ="-";
   notaPoderadaAlumno:string | number ="-";
+  notaPoderadaAlumnoReal:string | number ="-";
 
   invalidGuardarNotas:boolean=true;
   ngOnInit() {
@@ -117,7 +121,7 @@ export class DocenteComponent implements OnInit {
       this.datatable_dtTrigger_lista_alumnos.next(this.datatable_lista_alumnos);
     }, 200);
   }
-  
+
   listarCursos(){
     this.spinner.show();
     this.docenteService.listarCursos(this.usuario.id).subscribe({
@@ -152,8 +156,16 @@ export class DocenteComponent implements OnInit {
       next: resp => {
         this.lectura=lectura;
         this.alumnoSeleccionado=data;
-        this.notaPoderada ="-";
-        this.notaPoderadaAlumno ="-";
+        if(this.alumnoSeleccionado.estado == 'A' || this.alumnoSeleccionado.estado == 'D'){
+          this.notaPoderada =this.alumnoSeleccionado.notaFinal;
+          this.notaPoderadaAlumno =this.alumnoSeleccionado.notaAlumnoFinal;
+          this.notaPoderadaAlumnoReal=this.alumnoSeleccionado.notaAlumnoReal;
+        }
+        else{
+          this.notaPoderada ="-";
+          this.notaPoderadaAlumno ="-";
+          this.notaPoderadaAlumnoReal="-";
+        }
         this.modal_editar_notas_va = this.modalservice.open(this.modal_editar_notas, { ...this.modalOpciones, size: 'lg' });
         this.listaNotas=resp;
         this.spinner.hide();
@@ -178,6 +190,7 @@ export class DocenteComponent implements OnInit {
   formatearNota(index: number): void {
     this.notaPoderada="-";
     this.notaPoderadaAlumno="-";
+    this.notaPoderadaAlumnoReal="-";
     const nota = this.listaNotas[index].nota;
     if (nota === null || nota === '' || isNaN(nota) || nota < 0 || nota > 20) {
       this.listaNotas[index].nota = '';
@@ -187,12 +200,12 @@ export class DocenteComponent implements OnInit {
     this.listaNotas[index].nota = this.formatearDecimal(nota);
     this.listaNotas[index].notaAlumno = this.notaFavorAlumno(nota);
     this.notaPoderada=this.calcularPromedio();
-    this.notaPoderadaAlumno=this.calcularPromedioFavorAlumno();
+    this.notaPoderadaAlumnoReal=this.calcularPromedioFavorAlumno();
+    this.notaPoderadaAlumno= this.notaPoderadaAlumnoReal!='-'? this.notaFavorAlumno(Number(this.notaPoderadaAlumnoReal)):'-';
   }
-
-  
   notaFavorAlumno(value: number): string {
-    const rounded = value % 1 > 0.5 ? Math.ceil(value) : Math.floor(value);
+    const decimalPart = Math.round((value % 1) * 100) / 100;
+    const rounded = decimalPart >= 0.6 ? Math.ceil(value) : Math.floor(value);
     return rounded < 10 ? `0${rounded}` : `${rounded}`;
   }
 
@@ -202,14 +215,14 @@ export class DocenteComponent implements OnInit {
     }
     const nota = parseFloat(valor.toString());
     if (isNaN(nota) || nota < 0 || nota > 20) {
-      return 'invalid'; 
+      return 'invalid';
     }
     return 'valid';
-    
+
   }
   formatearDecimal(valor: string | number): string {
     const num = parseFloat(valor.toString());
-    return num.toFixed(2); 
+    return num.toFixed(2);
   }
 
   tieneNotasInvalidas(): boolean {
@@ -223,7 +236,7 @@ export class DocenteComponent implements OnInit {
     });
     return algunaInvalida;
   }
-  
+
   todasNotasValidas(): boolean {
     return this.listaNotas.every(nota => {
       const valor = nota.nota;
@@ -250,8 +263,9 @@ export class DocenteComponent implements OnInit {
       const porcentaje = nota.porcentaje;
       return acumulador + (valor * (porcentaje / 100));
     }, 0);
-    return this.notaFavorAlumno(promedio);
+    return this.formatearDecimal(promedio);
   }
+
 
   guardarNotas(){
     const request={

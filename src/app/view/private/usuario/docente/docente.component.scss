@@ -6,18 +6,18 @@
     justify-content: space-evenly;
     margin: 0 auto;
     width: 100%;
-  
+
     .card-payment {
       margin-top: 30px;
       position: relative;
       cursor: pointer;
-  
+
       .face {
         width: 300px;
         height: 200px;
         transition: 0.5s;
       }
-  
+
       .face.face1 {
         position: relative;
         background: $sunarp-gray-dark;
@@ -29,7 +29,7 @@
         border: 3px solid black;
         border-radius: 30px;
         box-shadow: 0px 0px 27px 11px rgba(0, 0, 0, 0.20);
-  
+
         .content-payment {
           opacity: 0.5;
           transition: 0.8s;
@@ -37,7 +37,7 @@
           img {
             max-width: 100px;
           }
-  
+
           h3 {
             margin: 15px 0 0;
             padding: 0;
@@ -46,14 +46,14 @@
             font-size: 1.1em;
           }
         }
-  
+
         &:hover {
           .content-payment {
             opacity: 1;
           }
         }
       }
-  
+
       .face.face2 {
         position: relative;
         background: $sunarp-white;
@@ -63,31 +63,31 @@
         padding: 20px;
         transform: translateY(-100px);
         text-align: center;
-  
+
         .content-payment {
           p {
             margin: 0;
             padding: 0;
             font-family: $ff-avenirLTStd-book;
-            font-size: 18px;
+            font-size: 15px;
           }
-  
+
           button {
             margin-top:20px;
           }
         }
       }
-  
+
       .face.face1.selected-face {
         background: $sunarp-gray-dark;
         transform: translateY(0);
         border-radius: 30px 30px 0px 0px;
-  
+
         .content-payment {
           opacity: 1;
         }
       }
-  
+
       .face.face2.selected-face {
         transform: translateY(0);
         border: 3px solid black;
@@ -97,28 +97,28 @@
       }
     }
   }
-  
-  .bg-sunarp-red-light {
-    background-color: #d75443 !important;
-  }
 
-  .table-soli-devo {
-    border-radius: .8em;
-    overflow: hidden;
-    background-color: transparent !important;
-  
-    thead {
-      background-color: #4b626c !important;
-      color: $sunarp-white;
-      
-      th {
-        font-family: $ff-avenirLTStd-black;
-        height: 20px;
-        vertical-align: middle !important;
-        text-align: center !important;
-      }
+.bg-sunarp-red-light {
+  background-color: #d75443 !important;
+}
+
+.table-soli-devo {
+  border-radius: .8em;
+  overflow: hidden;
+  background-color: transparent !important;
+
+  thead {
+    background-color: #4b626c !important;
+    color: $sunarp-white;
+
+    th {
+      font-family: $ff-avenirLTStd-black;
+      height: 20px;
+      vertical-align: middle !important;
+      text-align: center !important;
     }
   }
+}
 
 .alert-promedio {
     display: flex;

@@ -3,7 +3,7 @@
   <div *ngFor="let item of listaCursos" class="card-payment">
     <div class="face face1 bg-sunarp-red-light selected-face">
       <div class="content-payment">
-        <img alt="CCI" src="assets/img/formulario-virtual/icon-bank.png" />
+        <img alt="icono"  [src]="authService.obtenerRol()== CONSTANTES.DOCENTE_ROL ? 'assets/img/docente.png' : 'assets/img/alumno-curso.png'"  />
         <h3>{{item.curso}}</h3>
       </div>
     </div>
@@ -67,16 +67,18 @@
                 <th style="width: 30px" class="text-center">N°</th>
                 <th class="text-center">Criterio</th>
                 <th class="text-center">Porcentaje %</th>
-                <th class="text-center">Nota</th>
-                <th class="text-center">Nota Estudiante</th>
+                <th *ngIf="!lectura" class="text-center">Nota</th>
+                <th *ngIf="!lectura"  class="text-center">Nota a favor estudiante</th>
+                <th *ngIf="lectura" class="text-center">Nota</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let nota of listaNotas; let i = index">
-                <td>{{ nota.orden }}</td>
-                <td>{{ nota.criterio }}</td>
-                <td>{{ nota.porcentaje }}</td>
-                <td>
+                <td class="text-center">{{ nota.orden }}</td>
+                <td class="text-center">{{ nota.criterio }}</td>
+                <td class="text-center">{{ nota.porcentaje }}</td>
+                <td *ngIf="lectura" class="text-center fw-bold">{{ nota.notaAlumno==null?'--': nota.notaAlumno }}</td>
+                <td class="text-center" *ngIf="!lectura" >
                   <input
                     digitOnly
                     [(ngModel)]="listaNotas[i].nota"
@@ -84,14 +86,13 @@
                     [decimalSeparator]="'.'"
                     (blur)="formatearNota(i)"
                     type="text"
-                    [disabled]="lectura"
                     class="form-control-sunarp text-center"
                     [class.input-invalid]="validarRango(listaNotas[i].nota) === 'invalid'"
                     [class.input-valid]="validarRango(listaNotas[i].nota) === 'valid'"
                     (input)="validarRango(listaNotas[i].nota)"
                   />
                 </td>
-                <td>
+                <td class="text-center" *ngIf="!lectura" >
                   <input
                     digitOnly
                     [(ngModel)]="listaNotas[i].notaAlumno"
@@ -101,21 +102,24 @@
                   />
                 </td>
               </tr>
-              <tr *ngIf="alumnoSeleccionado.estado=='E' && !lectura">
-                <td colspan="3" class="text-end">Promedio Calculado:</td>
-                <td class="text-center fw-bold">{{notaPoderada}}</td>
+              <tr *ngIf="!lectura">
+                <td colspan="4" class="text-end">Promedio Calculado:</td>
+                <td *ngIf="false" class="text-center fw-bold">{{notaPoderada}}</td>
+                <td class="text-center fw-bold">{{notaPoderadaAlumnoReal}}</td>
+              </tr>
+              <tr *ngIf="!lectura">
+                <td colspan="4" class="text-end">Promedio a favor del Estudiante:</td>
                 <td class="text-center fw-bold">{{notaPoderadaAlumno}}</td>
-
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="alert-promedio">
+        <div *ngIf="lectura" class="alert-promedio">
           <span class="icono">
             <img src="assets/img/sistema/nota.svg" alt="Icono" />
           </span>
           <span class="texto">
-            <strong>Promedio:</strong> {{alumnoSeleccionado.notaAlumnoFinal==null? '--':alumnoSeleccionado.notaAlumnoFinal}}
+            <strong>Promedio:</strong>&nbsp;{{alumnoSeleccionado.notaAlumnoFinal==null? '--':+alumnoSeleccionado.notaAlumnoFinal}}
           </span>
           <span class="estado">{{alumnoSeleccionado.estado=='A'?'Aprobado':alumnoSeleccionado.estado=='D'?'Desaprobado':'En curso'}}</span>
         </div>
