@@ -66,17 +66,18 @@
               <tr>
                 <th style="width: 30px" class="text-center">N°</th>
                 <th class="text-center">Criterio</th>
-                <th class="text-center">Porcentaje %</th>
+                <th class="text-center">Porcentaje</th>
                 <th *ngIf="!lectura" class="text-center">Nota</th>
                 <th *ngIf="!lectura"  class="text-center">Nota a favor estudiante</th>
                 <th *ngIf="lectura" class="text-center">Nota</th>
+                <th *ngIf="!lectura" class="text-center">Acción</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let nota of listaNotas; let i = index">
                 <td class="text-center">{{ nota.orden }}</td>
                 <td class="text-center">{{ nota.criterio }}</td>
-                <td class="text-center">{{ nota.porcentaje }}</td>
+                <td class="text-center">{{ nota.porcentaje }} %</td>
                 <td *ngIf="lectura" class="text-center fw-bold">{{ nota.notaAlumno==null?'--': nota.notaAlumno }}</td>
                 <td class="text-center" *ngIf="!lectura" >
                   <input
@@ -100,6 +101,14 @@
                     class="form-control-sunarp text-center"
                     disabled="true"
                   />
+                </td>
+                <td *ngIf="!lectura" >
+                  <div class="btn-group">
+                    <button [disabled]="nota.notaId == null || (listaNotas[i].nota == null || listaNotas[i].nota == '')" 
+                    (click)="eliminarNotaAlumno(nota)"
+                    type="button" class="btn-outline-sunarp-red"><i
+                      class="fa fa-trash"></i></button>
+                  </div>
                 </td>
               </tr>
               <tr *ngIf="!lectura">

@@ -27,4 +27,8 @@ export class DocenteService {
   registrarEditarNotas(data: any): Observable<any> {
     return this.http.post<any>(this.baseEndpoint + '/registrar-editar-notas', JSON.stringify(data))
   }
+  eliminarNota(notaId: number,alumnoCursoId:number): Observable<any> {
+    return this.http.delete<any>(this.baseEndpoint + '/nota/'+notaId+'/alumno/'+alumnoCursoId)
+  }
+
 }

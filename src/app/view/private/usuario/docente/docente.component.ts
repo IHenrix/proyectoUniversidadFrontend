@@ -21,35 +21,35 @@ import Swal from 'sweetalert2';
 })
 export class DocenteComponent implements OnInit {
 
-  constructor(private docenteService:DocenteService, private alumnoService:AlumnoService, private modalservice: NgbModal,public authService: AuthService,private spinner: NgxSpinnerService) { }
+  constructor(private docenteService: DocenteService, private alumnoService: AlumnoService, private modalservice: NgbModal, public authService: AuthService, private spinner: NgxSpinnerService) { }
   usuario: Usuario = null;
-  listaCursos:any=[];
-  listaAlumnos:any=[];
-  listaNotas:any=[];
+  listaCursos: any = [];
+  listaAlumnos: any = [];
+  listaNotas: any = [];
 
   CONSTANTES: typeof CONSTANTES = CONSTANTES;
 
   @ViewChild('modal_editar_notas') modal_editar_notas: NgbModalRef;
   modal_editar_notas_va: any;
-  notaPonderada:string='0.00';
+  notaPonderada: string = '0.00';
   inputEnFoco: boolean = false;
-  lectura:boolean=false;
+  lectura: boolean = false;
   @ViewChildren(DataTableDirective) private dtElements;
   datatable_lista_alumnos: DataTables.Settings = {};
   datatable_dtTrigger_lista_alumnos: Subject<ADTSettings> = new Subject<ADTSettings>();
-  cursoSeleccionado:any=null;
-  alumnoSeleccionado:any=null;
+  cursoSeleccionado: any = null;
+  alumnoSeleccionado: any = null;
   modalOpciones: NgbModalOptions = {
     centered: true,
     animation: true,
     backdrop: 'static',
     keyboard: false
   }
-  notaPoderada:string | number ="-";
-  notaPoderadaAlumno:string | number ="-";
-  notaPoderadaAlumnoReal:string | number ="-";
+  notaPoderada: string | number = "-";
+  notaPoderadaAlumno: string | number = "-";
+  notaPoderadaAlumnoReal: string | number = "-";
 
-  invalidGuardarNotas:boolean=true;
+  invalidGuardarNotas: boolean = true;
   ngOnInit() {
     this.usuario = this.authService.usuario;
     setTimeout(() => {
@@ -68,7 +68,7 @@ export class DocenteComponent implements OnInit {
           { data: 'materno' },
           {
             data: 'notaAlumnoFinal', render: (data: any, type: any, full: any) => {
-              if(data==null){
+              if (data == null) {
                 return '--';
               }
               return data;
@@ -76,17 +76,17 @@ export class DocenteComponent implements OnInit {
           },
           {
             data: 'estado', render: (data: any, type: any, full: any) => {
-              let span="";
-              switch(data){
+              let span = "";
+              switch (data) {
                 case 'E':
-                  span='<span class="badge-sunarp badge-sunarp-gray-light">En curso</span>'
-                break;
+                  span = '<span class="badge-sunarp badge-sunarp-gray-light">En curso</span>'
+                  break;
                 case 'A':
-                  span='<span class="badge-sunarp badge-sunarp-green">Aprobado</span>'
-                break;
+                  span = '<span class="badge-sunarp badge-sunarp-green">Aprobado</span>'
+                  break;
                 case 'D':
-                  span='<span class="badge-sunarp badge-sunarp-red">Desaprobado</span>'
-                break;
+                  span = '<span class="badge-sunarp badge-sunarp-red">Desaprobado</span>'
+                  break;
               }
               return span;
             }
@@ -103,10 +103,10 @@ export class DocenteComponent implements OnInit {
         ],
         rowCallback: (row: Node, data: any[] | Object, index: number) => {
           $('.ver_detalle', row).off().on('click', () => {
-            this.seleccionAlumno(data,true);
+            this.seleccionAlumno(data, true);
           });
           $('.editar_notas', row).off().on('click', () => {
-            this.seleccionAlumno(data,false);
+            this.seleccionAlumno(data, false);
           });
           row.childNodes[0].textContent = String(index + 1);
           return row;
@@ -122,11 +122,11 @@ export class DocenteComponent implements OnInit {
     }, 200);
   }
 
-  listarCursos(){
+  listarCursos() {
     this.spinner.show();
     this.docenteService.listarCursos(this.usuario.id).subscribe({
       next: resp => {
-        this.listaCursos=resp;
+        this.listaCursos = resp;
         this.spinner.hide();
       },
       error() {
@@ -135,12 +135,12 @@ export class DocenteComponent implements OnInit {
     })
   }
 
-  seleccionarCurso(curso:any){
+  seleccionarCurso(curso: any) {
     this.spinner.show();
     this.docenteService.listarAlumnos(curso.id).subscribe({
       next: resp => {
-        this.listaAlumnos=resp;
-        this.cursoSeleccionado=curso;
+        this.listaAlumnos = resp;
+        this.cursoSeleccionado = curso;
         this.recargarTabla();
         this.spinner.hide();
       },
@@ -150,24 +150,24 @@ export class DocenteComponent implements OnInit {
     })
   }
 
-  seleccionAlumno(data:any,lectura:boolean){
+  seleccionAlumno(data: any, lectura: boolean) {
     this.spinner.show();
     this.alumnoService.listarNotas(this.cursoSeleccionado.id, data.id).subscribe({
       next: resp => {
-        this.lectura=lectura;
-        this.alumnoSeleccionado=data;
-        if(this.alumnoSeleccionado.estado == 'A' || this.alumnoSeleccionado.estado == 'D'){
-          this.notaPoderada =this.alumnoSeleccionado.notaFinal;
-          this.notaPoderadaAlumno =this.alumnoSeleccionado.notaAlumnoFinal;
-          this.notaPoderadaAlumnoReal=this.alumnoSeleccionado.notaAlumnoReal;
+        this.lectura = lectura;
+        this.alumnoSeleccionado = data;
+        if (this.alumnoSeleccionado.estado == 'A' || this.alumnoSeleccionado.estado == 'D') {
+          this.notaPoderada = this.alumnoSeleccionado.notaFinal;
+          this.notaPoderadaAlumno = this.alumnoSeleccionado.notaAlumnoFinal;
+          this.notaPoderadaAlumnoReal = this.alumnoSeleccionado.notaAlumnoReal;
         }
-        else{
-          this.notaPoderada ="-";
-          this.notaPoderadaAlumno ="-";
-          this.notaPoderadaAlumnoReal="-";
+        else {
+          this.notaPoderada = "-";
+          this.notaPoderadaAlumno = "-";
+          this.notaPoderadaAlumnoReal = "-";
         }
         this.modal_editar_notas_va = this.modalservice.open(this.modal_editar_notas, { ...this.modalOpciones, size: 'lg' });
-        this.listaNotas=resp;
+        this.listaNotas = resp;
         this.spinner.hide();
       },
       error() {
@@ -176,8 +176,8 @@ export class DocenteComponent implements OnInit {
     })
   }
 
-  regresarListaCursos(){
-    this.cursoSeleccionado=null;
+  regresarListaCursos() {
+    this.cursoSeleccionado = null;
   }
 
   recargarTabla() {
@@ -188,9 +188,9 @@ export class DocenteComponent implements OnInit {
   }
 
   formatearNota(index: number): void {
-    this.notaPoderada="-";
-    this.notaPoderadaAlumno="-";
-    this.notaPoderadaAlumnoReal="-";
+    this.notaPoderada = "-";
+    this.notaPoderadaAlumno = "-";
+    this.notaPoderadaAlumnoReal = "-";
     const nota = this.listaNotas[index].nota;
     if (nota === null || nota === '' || isNaN(nota) || nota < 0 || nota > 20) {
       this.listaNotas[index].nota = '';
@@ -199,9 +199,9 @@ export class DocenteComponent implements OnInit {
     }
     this.listaNotas[index].nota = this.formatearDecimal(nota);
     this.listaNotas[index].notaAlumno = this.notaFavorAlumno(nota);
-    this.notaPoderada=this.calcularPromedio();
-    this.notaPoderadaAlumnoReal=this.calcularPromedioFavorAlumno();
-    this.notaPoderadaAlumno= this.notaPoderadaAlumnoReal!='-'? this.notaFavorAlumno(Number(this.notaPoderadaAlumnoReal)):'-';
+    this.notaPoderada = this.calcularPromedio();
+    this.notaPoderadaAlumnoReal = this.calcularPromedioFavorAlumno();
+    this.notaPoderadaAlumno = this.notaPoderadaAlumnoReal != '-' ? this.notaFavorAlumno(Number(this.notaPoderadaAlumnoReal)) : '-';
   }
   notaFavorAlumno(value: number): string {
     const decimalPart = Math.round((value % 1) * 100) / 100;
@@ -254,7 +254,7 @@ export class DocenteComponent implements OnInit {
     }, 0);
     return promedio.toFixed(2);
   }
-  calcularPromedioFavorAlumno(){
+  calcularPromedioFavorAlumno() {
     if (!this.todasNotasValidas()) {
       return '-';
     }
@@ -267,11 +267,11 @@ export class DocenteComponent implements OnInit {
   }
 
 
-  guardarNotas(){
-    const request={
-      alumnoCursoId:this.alumnoSeleccionado.id,
-      cursoId:this.cursoSeleccionado.id,
-      notas:this.listaNotas
+  guardarNotas() {
+    const request = {
+      alumnoCursoId: this.alumnoSeleccionado.id,
+      cursoId: this.cursoSeleccionado.id,
+      notas: this.listaNotas
     }
     this.spinner.show();
     this.docenteService.registrarEditarNotas(request).subscribe({
@@ -279,9 +279,9 @@ export class DocenteComponent implements OnInit {
         Swal.fire({
           icon: "success",
           title: "Se ha guardado satisfactoriamente las notas del alumno " +
-                 this.alumnoSeleccionado?.paterno + ' ' +
-                 this.alumnoSeleccionado?.materno + ' ' +
-                 this.alumnoSeleccionado?.nombre,
+            this.alumnoSeleccionado?.paterno + ' ' +
+            this.alumnoSeleccionado?.materno + ' ' +
+            this.alumnoSeleccionado?.nombre,
           text: environment.nameSystem,
           allowEnterKey: false,
           allowEscapeKey: false,
@@ -301,6 +301,53 @@ export class DocenteComponent implements OnInit {
         this.spinner.hide();
       },
     })
+
+  }
+
+  eliminarNotaAlumno(nota: any) {
+
+    Swal.fire({
+      icon: "warning",
+      title: "¿Desea eliminar la nota " + nota.notaAlumno + " de " + nota.criterio + " del alumno " + this.alumnoSeleccionado?.paterno + ' ' +
+        this.alumnoSeleccionado?.materno + " " +
+        this.alumnoSeleccionado?.nombre + "?",
+      text: "Esta accion es irreversible",
+      confirmButtonText: '<span style="padding: 0 12px;">Sí, eliminar</span>',
+      showCancelButton: true,
+      cancelButtonText: 'No, cancelar',
+      cancelButtonColor: '#EB3219',
+      allowEnterKey: false,
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.spinner.show();
+        this.docenteService.eliminarNota(nota.notaId,this.alumnoSeleccionado.id).subscribe({
+          next: resp => {
+            Swal.fire({
+              icon: "info",
+              title: "Se ha eliminado la nota correctamente",
+              text: environment.nameSystem,
+              allowEnterKey: false,
+              allowEscapeKey: false,
+              allowOutsideClick: false,
+              confirmButtonColor: '#00A5A5',
+              confirmButtonText: '<span style="padding: 0 15px;">Aceptar</span>'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.seleccionarCurso(this.cursoSeleccionado);
+              }
+            });
+            this.spinner.hide();
+            this.modal_editar_notas_va.close();
+          },
+          error() {
+            alertNotificacion("Se ha producido un error al intentar eliminar la nota")
+            this.spinner.hide();
+          },
+        })
+      }
+    });
 
   }
 

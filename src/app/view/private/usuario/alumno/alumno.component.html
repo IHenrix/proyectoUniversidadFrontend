@@ -35,6 +35,7 @@
       <h2 class="text-center mb-3 text-sunarp-red" style="font-size: 20px;font-weight: bold;">
         {{alumnoSeleccionado?.curso}}
       </h2>
+      <h6 class="text-center">Creditos: {{alumnoSeleccionado.creditos}}</h6>
       <div class="mt-2">
         <div class="table-responsive">
           <table class="table table-soli-devo row-focus w-100">
@@ -42,7 +43,7 @@
               <tr>
                 <th style="width: 30px" class="text-center">N°</th>
                 <th class="text-center">Criterio</th>
-                <th class="text-center">Porcentaje %</th>
+                <th class="text-center">Porcentaje</th>
                 <th class="text-center">Nota</th>
               </tr>
             </thead>
@@ -50,7 +51,7 @@
               <tr *ngFor="let nota of listaNotas; let i = index">
                 <td class="text-center">{{ nota.orden }}</td>
                 <td class="text-center">{{ nota.criterio }}</td>
-                <td class="text-center">{{ nota.porcentaje }}</td>
+                <td class="text-center">{{ nota.porcentaje }} %</td>
                 <td class="text-center fw-bold">{{ nota.notaAlumno==null?'--': nota.notaAlumno }}</td>
               </tr>
             </tbody>

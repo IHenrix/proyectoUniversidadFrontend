@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   login(data:any): Observable<any> {
-    const urlEndpoint = environment.urlApiMicroservices.domain + "/login";
+    const urlEndpoint = environment.urlApiMicroservices.domain + "/usuario/login";
     return this.http.post<any>(urlEndpoint, JSON.stringify(data));
   }
 

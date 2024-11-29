@@ -331,6 +331,13 @@
   }
 }
 
+.btn-outline-sunarp-red[disabled] {
+  background-color: $sunarp-gray-light;
+  border: 2px solid $sunarp-gray-dark;
+  color: $sunarp-gray-dark;
+  cursor: not-allowed;
+}
+
 /*btn small*/
 
 .btn-sm-sunarp {
